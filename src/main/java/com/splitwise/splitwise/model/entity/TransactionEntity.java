@@ -25,15 +25,21 @@ public class TransactionEntity {
     private double amount;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date transaactionDate;
+    private Date transactionDate;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "user_id")
     private UserEntity userEntity;
 
     @ManyToOne
     @JoinColumn(name = "group_id")
     private GroupEntity groupEntity;
+
+    public void addTransaction(final UserEntity userEntity, final GroupEntity groupEntity) {
+        this.userEntity = userEntity;
+        this.groupEntity = groupEntity;
+    }
+
 
     public Long getId() {
         return id;
@@ -51,12 +57,12 @@ public class TransactionEntity {
         this.amount = amount;
     }
 
-    public Date getTransaactionDate() {
-        return transaactionDate;
+    public Date getTransactionDate() {
+        return transactionDate;
     }
 
-    public void setTransaactionDate(final Date transaactionDate) {
-        this.transaactionDate = transaactionDate;
+    public void setTransactionDate(final Date transactionDate) {
+        this.transactionDate = transactionDate;
     }
 
     public UserEntity getUserEntity() {

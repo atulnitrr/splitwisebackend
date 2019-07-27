@@ -8,6 +8,8 @@ import com.splitwise.splitwise.model.entity.UserEntity;
 @Repository
 public interface UserRepo extends CrudRepository<UserEntity, Long> {
 
+    UserEntity findByName(final String name);
+
 
 
 }

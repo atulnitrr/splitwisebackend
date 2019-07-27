@@ -31,17 +31,17 @@ public class UserEntity {
             inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "group_id"))
     private Set<GroupEntity> groups;
 
-    @OneToMany(mappedBy = "userEntity")
-    private Set<TransactionEntity> transactions;
-
-
-    public Set<TransactionEntity> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(final Set<TransactionEntity> transactions) {
-        this.transactions = transactions;
-    }
+//    @OneToMany(mappedBy = "userEntity")
+//    private Set<TransactionEntity> transactions;
+//
+//
+//    public Set<TransactionEntity> getTransactions() {
+//        return transactions;
+//    }
+//
+//    public void setTransactions(final Set<TransactionEntity> transactions) {
+//        this.transactions = transactions;
+//    }
 
     public void addUserToGroup(final GroupEntity groupEntity) {
         if (groups == null) {
