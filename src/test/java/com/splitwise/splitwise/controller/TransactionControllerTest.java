@@ -32,7 +32,7 @@ public class TransactionControllerTest {
     public void test() {
         final TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.setGroupName("Nirma");
-        transactionRequest.setTransDetail(Arrays.asList(new TransDetail("Hema", 10), new TransDetail("Rekha", 20)));
+        transactionRequest.setTransDetail(Arrays.asList(new TransDetail("Rekha", 60)) );
         final Response response =
                 given()
                         .contentType("application/json")

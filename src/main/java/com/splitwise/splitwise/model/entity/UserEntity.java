@@ -11,7 +11,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
@@ -30,18 +29,6 @@ public class UserEntity {
     @JoinTable(name = "user_group", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "group_id", referencedColumnName = "group_id"))
     private Set<GroupEntity> groups;
-
-//    @OneToMany(mappedBy = "userEntity")
-//    private Set<TransactionEntity> transactions;
-//
-//
-//    public Set<TransactionEntity> getTransactions() {
-//        return transactions;
-//    }
-//
-//    public void setTransactions(final Set<TransactionEntity> transactions) {
-//        this.transactions = transactions;
-//    }
 
     public void addUserToGroup(final GroupEntity groupEntity) {
         if (groups == null) {
@@ -73,5 +60,13 @@ public class UserEntity {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    @Override public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", groups=" + groups +
+                '}';
     }
 }

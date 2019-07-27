@@ -25,18 +25,6 @@ public class GroupEntity {
     @ManyToMany(mappedBy = "groups", cascade = CascadeType.ALL)
     private Set<UserEntity> users;
 
-//
-//    @OneToMany(mappedBy = "groupEntity")
-//    private Set<TransactionEntity> transactions;
-//
-//    public Set<TransactionEntity> getTransactions() {
-//        return transactions;
-//    }
-//
-//    public void setTransactions(final Set<TransactionEntity> transactions) {
-//        this.transactions = transactions;
-//    }
-
     public Set<UserEntity> getUsers() {
         return users;
     }
