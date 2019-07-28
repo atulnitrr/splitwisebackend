@@ -1,6 +1,7 @@
 package com.splitwise.splitwise.service.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -35,22 +36,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addUserToGroup(final UserGroupRequest request) {
-        final Set<UserEntity> userEntities;
         GroupEntity currentGroup = groupRepo.findByName(request.getGroupName());
-
         if (currentGroup == null) {
-            userEntities = new HashSet<>();
             currentGroup = new GroupEntity();
             currentGroup.setName(request.getGroupName());
-        } else {
-            userEntities = currentGroup.getUsers();
         }
 
-        final UserEntity userEntity = new UserEntity();
-        userEntity.setName(request.getUserName());
-        userEntities.add(userEntity);
-        currentGroup.setUsers(userEntities);
-        userEntity.addUserToGroup(currentGroup);
-        userRepo.save(userEntity);
+        List<String> allUsers = request.getUserNames();
+
+        for (int i = 0; i < allUsers.size(); i++) {
+            final String userName = allUsers.get(i);
+            UserEntity userEntity = userRepo.findByName(userName);
+
+            if (userEntity == null) {
+                userEntity = new UserEntity();
+                userEntity.setName(userName);
+            }
+
+            userEntity.addUserToGroup(currentGroup);
+            userRepo.save(userEntity);
+        }
+
+
     }
 }

@@ -1,16 +1,19 @@
 package com.splitwise.splitwise.model.request;
 
+import java.util.List;
+
+
 public class UserGroupRequest {
 
-    private String userName;
+    private List<String> userNames;
     private String groupName;
 
-    public String getUserName() {
-        return userName;
+    public List<String> getUserNames() {
+        return userNames;
     }
 
-    public void setUserName(final String userName) {
-        this.userName = userName;
+    public void setUserNames(final List<String> userNames) {
+        this.userNames = userNames;
     }
 
     public String getGroupName() {

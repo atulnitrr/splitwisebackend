@@ -24,4 +24,8 @@ public interface SettleTransRepo extends CrudRepository<SettleTransEntity, Long>
 
     @Query(value = "select t from SettleTransEntity t where t.groupEntity = :group")
     List<SettleTransEntity> findGroupBalanceByUser(@Param("group") final GroupEntity groupEntity);
+
+
+    @Query(value = "select t from SettleTransEntity t where t.userA = :user or t.userB = :user")
+    List<SettleTransEntity> findUserExpenses(@Param("user") final UserEntity userEntity);
 }

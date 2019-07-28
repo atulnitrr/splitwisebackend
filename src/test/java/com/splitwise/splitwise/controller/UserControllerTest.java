@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
+import java.util.Arrays;
 import com.splitwise.splitwise.model.request.AddGroupRequest;
 import com.splitwise.splitwise.model.request.UserGroupRequest;
 import io.restassured.response.Response;
@@ -27,6 +28,9 @@ public class UserControllerTest {
         RestAssured.port = 8080;
     }
 
+    /**
+     * Warrior, Rekha, Roger
+     */
     /**
      * test_createGroup
      */
@@ -53,7 +57,7 @@ public class UserControllerTest {
     public void b() {
         final UserGroupRequest userGroupRequest = new UserGroupRequest();
         userGroupRequest.setGroupName("Nirma");
-        userGroupRequest.setUserName("Hema");
+        userGroupRequest.setUserNames(Arrays.asList("Hema", "Rekha"));
         final Response response = given()
                 .accept("application/json")
                 .contentType("application/json")
@@ -65,10 +69,35 @@ public class UserControllerTest {
                 .extract()
                 .response();
 
-        final UserGroupRequest userGroupRequest2 = new UserGroupRequest();
-        userGroupRequest.setGroupName("Nirma");
-        userGroupRequest.setUserName("Rekha");
-        final Response response2 = given()
+    }
+
+
+    @Test
+    public void c() {
+        final AddGroupRequest addGroupRequest = new AddGroupRequest();
+        addGroupRequest.setName("Warrior");
+        final Response response =
+                given().accept("application/json")
+                        .contentType("application/json")
+                        .body(addGroupRequest)
+                        .when()
+                        .post("/users/addgroup")
+                        .then().statusCode(200)
+                        .extract()
+                        .response();
+
+    }
+
+
+    /**
+     * test_addUserToGroup
+     */
+    @Test
+    public void d() {
+        final UserGroupRequest userGroupRequest = new UserGroupRequest();
+        userGroupRequest.setGroupName("Warrior");
+        userGroupRequest.setUserNames(Arrays.asList("Rekha", "Roger"));
+        final Response response = given()
                 .accept("application/json")
                 .contentType("application/json")
                 .body(userGroupRequest)
@@ -78,6 +107,8 @@ public class UserControllerTest {
                 .statusCode(200)
                 .extract()
                 .response();
+        System.out.println(response.asString());
 
     }
+
 }

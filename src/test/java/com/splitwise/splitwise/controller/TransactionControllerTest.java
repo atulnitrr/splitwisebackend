@@ -33,7 +33,7 @@ public class TransactionControllerTest {
         final TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.setGroupName("Nirma");
 //        new TransDetail("Rekha", 60)
-        transactionRequest.setTransDetail(Arrays.asList( new TransDetail("Hema", 50) ));
+        transactionRequest.setTransDetail(Arrays.asList( new TransDetail("Hema", 50), new TransDetail("Rekha", 60) ));
         final Response response =
                 given()
                         .contentType("application/json")
@@ -45,6 +45,38 @@ public class TransactionControllerTest {
                         .statusCode(200)
                         .extract()
                         .response();
+    }
+
+    @Test
+    public void test_3() {
+        final TransactionRequest transactionRequest = new TransactionRequest();
+        transactionRequest.setGroupName("Warrior");
+        transactionRequest.setTransDetail(Arrays.asList( new TransDetail("Rekha", 80), new TransDetail("Roger", 30) ));
+        final Response response =
+                given()
+                        .contentType("application/json")
+                        .accept("application/json")
+                        .body(transactionRequest)
+                        .when()
+                        .post("/trans")
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .response();
+    }
+
+    @Test
+    public void test_GetUserBalanceInALlGroup() {
+
+        final Response response =
+                given()
+                        .accept("application/json")
+                        .when()
+                        .get("/trans/balance/user/Roger")
+                        .then()
+                        .statusCode(200).extract()
+                        .response();
+        System.out.println(response.asString());
     }
 
     @Test

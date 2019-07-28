@@ -45,10 +45,10 @@ public class TransactionController {
     }
 
 
-    @GetMapping(path = "/{userName}/balance")
+    @GetMapping(path = "/balance/user/{userName}")
     private ResponseEntity<?> getPersonBalanceInALlGroup(@PathVariable(name = "userName", required = true) final String userName) {
 
-        return ResponseEntity.ok().body(10);
+        return ResponseEntity.ok().body(transactionService.getUserBalanceInALlGroup(userName));
     }
 
 

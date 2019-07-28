@@ -41,6 +41,19 @@ public class TransactionServiceImpl implements TransactionService  {
     }
 
     @Override
+    public double getUserBalanceInALlGroup(final String userName) {
+        UserEntity userEntity = userRepo.findByName(userName);
+        List<SettleTransEntity> settleTransEntities = settleTransRepo.findUserExpenses(userEntity);
+        double totalPaid =
+                settleTransEntities.stream().filter(t -> t.getUserA().equals(userEntity)).mapToDouble(t-> t.getAmount()).sum();
+
+        double totalOwe =
+                settleTransEntities.stream().filter(t->t.getUserB().equals(userEntity)).mapToDouble(t-> -t.getAmount()).sum();
+
+        return totalPaid + totalOwe;
+    }
+
+    @Override
     public Map<String, Double> groupBalanceByUser(final String groupName) {
 
         final GroupEntity groupEntity = groupRepo.findByName(groupName);

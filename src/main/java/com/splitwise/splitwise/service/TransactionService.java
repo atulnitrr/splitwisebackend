@@ -11,5 +11,7 @@ public interface TransactionService {
 
     double userBalanceInGroup(final String groupName, final String userName);
 
+    double getUserBalanceInALlGroup(final String userName);
+
     Map<String, Double> groupBalanceByUser(final String groupName);
 }
