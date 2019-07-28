@@ -3,6 +3,7 @@ package com.splitwise.splitwise.service;
 import java.util.List;
 import java.util.Map;
 import com.splitwise.splitwise.model.request.TransactionRequest;
+import com.splitwise.splitwise.model.response.UserBalanceResponse;
 
 
 public interface TransactionService {
@@ -13,5 +14,5 @@ public interface TransactionService {
 
     double getUserBalanceInALlGroup(final String userName);
 
-    Map<String, Double> groupBalanceByUser(final String groupName);
+    List<UserBalanceResponse> groupBalanceByUser(final String groupName);
 }

@@ -1,5 +1,6 @@
 package com.splitwise.splitwise.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.splitwise.splitwise.exception.SplitwiseAppException;
 import com.splitwise.splitwise.model.entity.GroupEntity;
 import com.splitwise.splitwise.model.entity.SettleTransEntity;
@@ -15,6 +17,7 @@ import com.splitwise.splitwise.model.entity.TransactionEntity;
 import com.splitwise.splitwise.model.entity.UserEntity;
 import com.splitwise.splitwise.model.request.TransDetail;
 import com.splitwise.splitwise.model.request.TransactionRequest;
+import com.splitwise.splitwise.model.response.UserBalanceResponse;
 import com.splitwise.splitwise.repo.GroupRepo;
 import com.splitwise.splitwise.repo.SettleTransRepo;
 import com.splitwise.splitwise.repo.TransactionRepo;
@@ -54,13 +57,15 @@ public class TransactionServiceImpl implements TransactionService  {
     }
 
     @Override
-    public Map<String, Double> groupBalanceByUser(final String groupName) {
+    public List<UserBalanceResponse> groupBalanceByUser(final String groupName) {
 
         final GroupEntity groupEntity = groupRepo.findByName(groupName);
         if (groupEntity == null) {
             throw new SplitwiseAppException("Group not found " + groupName);
         }
 
+
+        final List<UserBalanceResponse> userBalanceResponses = new ArrayList<>();
         final Map<String, Double> map = new HashMap<>();
 
         List<SettleTransEntity> settleTransEntities = settleTransRepo.findGroupBalanceByUser(groupEntity);
@@ -86,7 +91,11 @@ public class TransactionServiceImpl implements TransactionService  {
 
         }
 
-        return map;
+        for (Map.Entry<String, Double> entry : map.entrySet()) {
+            userBalanceResponses.add(new UserBalanceResponse(entry.getKey(), entry.getValue()));
+        }
+
+        return userBalanceResponses;
     }
 
 
@@ -104,10 +113,11 @@ public class TransactionServiceImpl implements TransactionService  {
             throw new SplitwiseAppException("Group not found " + groupName);
         }
 
-       return groupBalanceByUser(groupName).get(userName);
+       return groupBalanceByUser(groupName).stream().filter(userBalanceResponse -> userBalanceResponse.getName().equals(userName)).mapToDouble(user -> user.getAmout()).sum();
     }
 
     @Override
+    @Transactional
     public void addTransaction(final TransactionRequest request) {
         final String groupName = request.getGroupName();
         final GroupEntity groupEntity = groupRepo.findByName(groupName);
@@ -124,9 +134,8 @@ public class TransactionServiceImpl implements TransactionService  {
             if (userEntity == null) {
                 throw new SplitwiseAppException("User not found " + userName);
             }
-            // add amount to transaction table
+//             add amount to transaction table
             addAmount(transDetail.getAmount(), userEntity, groupEntity);
-
 
             settle(transDetail.getAmount(), userEntity, groupEntity);
         }
@@ -146,6 +155,8 @@ public class TransactionServiceImpl implements TransactionService  {
         final Set<UserEntity> allUsers =  groupEntity.getUsers();
         final Iterator<UserEntity> iterator = allUsers.iterator();
         final double amountToSettle = amount / (allUsers.size() );
+
+
         while (iterator.hasNext()) {
             final UserEntity currentUser = iterator.next();
             if (currentUser.getName().equals(userEntity.getName())) {
@@ -163,8 +174,7 @@ public class TransactionServiceImpl implements TransactionService  {
 
         // here A -> B = +20 it means a will get 20 from B
         if (settleTransEntity != null) {
-            settleTransEntity.setAmount(settleTransEntity.getAmount() + amountToSettle);
-            settleTransRepo.save(settleTransEntity);
+            settleTransRepo.updateAmount(settleTransEntity.getAmount() + amountToSettle, settleTransEntity.getId());
             return;
         }
 
@@ -173,8 +183,7 @@ public class TransactionServiceImpl implements TransactionService  {
                 paidBy, groupEntity);
 
         if (settleTransEntity != null) {
-            settleTransEntity.setAmount(settleTransEntity.getAmount() - amountToSettle);
-            settleTransRepo.save(settleTransEntity);
+            settleTransRepo.updateAmount(settleTransEntity.getAmount() - amountToSettle, settleTransEntity.getId());
             return;
         }
 

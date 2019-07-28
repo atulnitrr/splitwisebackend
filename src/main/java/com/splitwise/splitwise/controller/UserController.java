@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -41,6 +42,12 @@ public class UserController {
     public ResponseEntity<?> getALlGroups() {
         return ResponseEntity.ok().body(userService.getAllGroups());
 
+    }
+
+
+    @GetMapping(path = "/{groupName}")
+    public ResponseEntity<?> getAllUserOfGroup(@PathVariable(name = "groupName", required = true) final String groupName) {
+        return ResponseEntity.ok().body(userService.getAllUsersOfGroup(groupName));
     }
 
 

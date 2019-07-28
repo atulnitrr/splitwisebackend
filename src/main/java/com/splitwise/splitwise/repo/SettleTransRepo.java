@@ -1,6 +1,7 @@
 package com.splitwise.splitwise.repo;
 
 import java.util.List;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -28,4 +29,8 @@ public interface SettleTransRepo extends CrudRepository<SettleTransEntity, Long>
 
     @Query(value = "select t from SettleTransEntity t where t.userA = :user or t.userB = :user")
     List<SettleTransEntity> findUserExpenses(@Param("user") final UserEntity userEntity);
+
+    @Modifying
+    @Query(value = "update SettleTransEntity s set s.amount =  :amount where s.id = :id")
+    void updateAmount(@Param("amount") final double amount, @Param("id") final Long id);
 }

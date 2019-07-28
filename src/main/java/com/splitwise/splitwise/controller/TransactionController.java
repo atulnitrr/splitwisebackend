@@ -2,6 +2,7 @@ package com.splitwise.splitwise.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import com.splitwise.splitwise.service.TransactionService;
 
 @RestController
 @RequestMapping("/trans")
+@CrossOrigin
 public class TransactionController {
 
     private TransactionService transactionService;
@@ -27,7 +29,7 @@ public class TransactionController {
     @PostMapping
     public ResponseEntity<?> addTrans(@RequestBody  final TransactionRequest transactionRequest) {
         transactionService.addTransaction(transactionRequest);
-        return ResponseEntity.ok().body("Added users");
+        return ResponseEntity.ok().body("Added  transaction");
     }
 
     @GetMapping(path = "/{groupName}/{userName}")

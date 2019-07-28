@@ -10,5 +10,6 @@ public interface UserService {
     void addGroup(final AddGroupRequest groupName);
     void addUserToGroup(final UserGroupRequest request);
     List<String> getAllGroups();
+    List<String> getAllUsersOfGroup(final String groupName);
 
 }

@@ -31,6 +31,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<String> getAllUsersOfGroup(final String groupName) {
+        final GroupEntity groupEntity = groupRepo.findByName(groupName);
+        if (groupEntity == null) {
+            throw new SplitwiseAppException(groupName + " --> Not found");
+        }
+
+        final Set<UserEntity> userEntities = groupEntity.getUsers();
+
+        final List<String> users = new ArrayList<>();
+
+        for (UserEntity userEntity : userEntities) {
+            users.add(userEntity.getName());
+        }
+
+        return users;
+    }
+
+    @Override
     public List<String> getAllGroups() {
         final Iterator<GroupEntity> iterator = groupRepo.findAll().iterator();
         final List<String> groups = new ArrayList<>();
