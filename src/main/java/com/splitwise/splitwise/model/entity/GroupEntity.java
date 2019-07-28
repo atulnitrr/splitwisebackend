@@ -20,6 +20,8 @@ public class GroupEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "group_id")
     private Long id;
+
+    @Column(nullable = false, unique = true)
     private String name;
 
     @ManyToMany(mappedBy = "groups", cascade = CascadeType.ALL)
