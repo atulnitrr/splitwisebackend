@@ -32,7 +32,8 @@ public class TransactionControllerTest {
     public void test() {
         final TransactionRequest transactionRequest = new TransactionRequest();
         transactionRequest.setGroupName("Nirma");
-        transactionRequest.setTransDetail(Arrays.asList(new TransDetail("Rekha", 60)) );
+//        new TransDetail("Rekha", 60)
+        transactionRequest.setTransDetail(Arrays.asList( new TransDetail("Hema", 50) ));
         final Response response =
                 given()
                         .contentType("application/json")
@@ -44,5 +45,34 @@ public class TransactionControllerTest {
                         .statusCode(200)
                         .extract()
                         .response();
+    }
+
+    @Test
+    public void test_GetByUserGroup() {
+
+        final Response response = given()
+                .accept("application/json")
+                .when()
+                .get("/trans/Nirma/Rekha")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+        System.out.println(response.asString());
+    }
+
+
+    @Test
+    public void test_GetUserBalanceINGroup() {
+
+        final Response response = given()
+                .accept("application/json")
+                .when()
+                .get("/trans/Nirma")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+        System.out.println(response.asString());
     }
 }

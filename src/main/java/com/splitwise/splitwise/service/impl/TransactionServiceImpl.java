@@ -1,8 +1,10 @@
 package com.splitwise.splitwise.service.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,60 @@ public class TransactionServiceImpl implements TransactionService  {
     }
 
     @Override
+    public Map<String, Double> groupBalanceByUser(final String groupName) {
+
+        final GroupEntity groupEntity = groupRepo.findByName(groupName);
+        if (groupEntity == null) {
+            throw new SplitwiseAppException("Group not found " + groupName);
+        }
+
+        final Map<String, Double> map = new HashMap<>();
+
+        List<SettleTransEntity> settleTransEntities = settleTransRepo.findGroupBalanceByUser(groupEntity);
+
+        for (int i = 0; i < settleTransEntities.size(); i++) {
+
+            final SettleTransEntity settleTransEntity = settleTransEntities.get(i);
+            final String userA = settleTransEntity.getUserA().getName();
+            final String userB = settleTransEntity.getUserB().getName();
+            final Double amount = settleTransEntity.getAmount();
+
+            if (map.containsKey(userA)) {
+                map.put(userA,  map.get(userA) + amount);
+            } else {
+                map.put(userA,  amount);
+            }
+
+            if (map.containsKey(userB)) {
+                map.put(userB, map.get(userB) - amount);
+            } else {
+                map.put(userB, -amount);
+            }
+
+        }
+
+        return map;
+    }
+
+
+    @Override
+    public double userBalanceInGroup(final String groupName, final String userName) {
+        final UserEntity userEntity = userRepo.findByName(userName);
+
+        if (userEntity == null) {
+            throw new SplitwiseAppException("User not found " + userName);
+        }
+
+        final GroupEntity groupEntity = groupRepo.findByName(groupName);
+
+        if (groupEntity == null) {
+            throw new SplitwiseAppException("Group not found " + groupName);
+        }
+
+       return groupBalanceByUser(groupName).get(userName);
+    }
+
+    @Override
     public void addTransaction(final TransactionRequest request) {
         final String groupName = request.getGroupName();
         final GroupEntity groupEntity = groupRepo.findByName(groupName);
@@ -63,6 +119,7 @@ public class TransactionServiceImpl implements TransactionService  {
         }
 
     }
+
 
     private void addAmount(final double amount, final UserEntity userEntity, final GroupEntity groupEntity) {
         final TransactionEntity transactionEntity = new TransactionEntity();
@@ -116,6 +173,7 @@ public class TransactionServiceImpl implements TransactionService  {
 
         settleTransRepo.save(settleTransEntity);
     }
+
 
 
 }
