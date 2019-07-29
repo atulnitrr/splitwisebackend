@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import com.splitwise.splitwise.exception.SplitwiseAppException;
 import com.splitwise.splitwise.model.entity.GroupEntity;
@@ -28,6 +30,11 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(final UserRepo userRepo, final GroupRepo groupRepo) {
         this.userRepo = userRepo;
         this.groupRepo = groupRepo;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(final String s) throws UsernameNotFoundException {
+        return null;
     }
 
     @Override

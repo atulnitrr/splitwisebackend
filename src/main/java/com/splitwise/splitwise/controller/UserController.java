@@ -29,6 +29,7 @@ public class UserController {
 
 
 
+    @PostMapping
     public ResponseEntity<?> registerUser() {
 
         return ResponseEntity.ok().body("Added succes");
