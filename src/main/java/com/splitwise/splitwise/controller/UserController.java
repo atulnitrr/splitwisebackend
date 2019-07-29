@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.splitwise.splitwise.model.request.AddGroupRequest;
 import com.splitwise.splitwise.model.request.UserGroupRequest;
+import com.splitwise.splitwise.model.response.RegisterUserResponse;
 import com.splitwise.splitwise.service.UserService;
 
 
@@ -24,6 +25,13 @@ public class UserController {
     @Autowired
     public UserController(final UserService userService) {
         this.userService = userService;
+    }
+
+
+
+    public ResponseEntity<?> registerUser() {
+
+        return ResponseEntity.ok().body("Added succes");
     }
 
     @PostMapping(path = "/addgroup")
