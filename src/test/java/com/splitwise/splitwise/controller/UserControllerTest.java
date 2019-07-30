@@ -4,13 +4,16 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import java.util.Arrays;
 import com.splitwise.splitwise.model.request.AddGroupRequest;
+import com.splitwise.splitwise.model.request.RegisterUserRequest;
 import com.splitwise.splitwise.model.request.UserGroupRequest;
 import io.restassured.response.Response;
 
@@ -22,10 +25,38 @@ public class UserControllerTest {
     @Autowired
     private UserController userController;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
     @Before
     public void setUp() throws Exception {
-        RestAssured.baseURI =  "http://localhost:8080";
-        RestAssured.port = 8080;
+        RestAssured.baseURI =  "http://localhost";
+        RestAssured.port = 8890;
+    }
+
+    @Test
+    public void test_AddUsers() {
+
+        final RegisterUserRequest registerUserRequest = new RegisterUserRequest();
+        registerUserRequest.setName("Atul");
+        registerUserRequest.setEmail("ak@gmail.com");
+        registerUserRequest.setPassword("123");
+
+        final Response response = given()
+                .contentType("application/json")
+                .accept("application/json")
+                .body(registerUserRequest)
+                .when()
+                .post("/users")
+                .then()
+                .statusCode(200)
+                .extract()
+                .response();
+
+        System.out.println(response.asString());
     }
 
     /**
@@ -34,7 +65,7 @@ public class UserControllerTest {
     /**
      * test_createGroup
      */
-    @Test
+//    @Test
     public void a() {
         final AddGroupRequest addGroupRequest = new AddGroupRequest();
         addGroupRequest.setName("Nirma");

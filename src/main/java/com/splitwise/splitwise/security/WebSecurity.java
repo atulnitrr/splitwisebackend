@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.splitwise.splitwise.service.UserService;
 
@@ -34,14 +35,17 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/users")
                 .permitAll()
-                .antMatchers(HttpMethod.GET, "/demo")
-                .permitAll()
+//                .antMatchers(HttpMethod.GET, "/demo")
+//                .permitAll()
                 .antMatchers("/h2-console/**")
                 .permitAll()
                 .anyRequest()
-                .authenticated();
+                .authenticated()
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
-        //top check the h2 console
+        //too check the h2 console
         http.headers().frameOptions().disable();
     }
 

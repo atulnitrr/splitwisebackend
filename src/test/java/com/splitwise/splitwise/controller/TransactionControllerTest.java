@@ -24,7 +24,7 @@ public class TransactionControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        RestAssured.baseURI = "http://localhost:8080";
+        RestAssured.baseURI = "http://localhost";
         RestAssured.port = 8890;
     }
 

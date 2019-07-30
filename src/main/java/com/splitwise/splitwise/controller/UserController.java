@@ -1,5 +1,6 @@
 package com.splitwise.splitwise.controller;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,7 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.splitwise.splitwise.dto.UserDto;
 import com.splitwise.splitwise.model.request.AddGroupRequest;
+import com.splitwise.splitwise.model.request.RegisterUserRequest;
 import com.splitwise.splitwise.model.request.UserGroupRequest;
 import com.splitwise.splitwise.model.response.RegisterUserResponse;
 import com.splitwise.splitwise.service.UserService;
@@ -21,18 +24,23 @@ import com.splitwise.splitwise.service.UserService;
 public class UserController {
 
     private UserService userService;
+    private ModelMapper modelMapper;
 
     @Autowired
-    public UserController(final UserService userService) {
+    public UserController(final UserService userService, final ModelMapper modelMapper) {
         this.userService = userService;
+        this.modelMapper = modelMapper;
     }
 
 
-
     @PostMapping
-    public ResponseEntity<?> registerUser() {
-
-        return ResponseEntity.ok().body("Added succes");
+    public ResponseEntity<?> registerUser(@RequestBody final RegisterUserRequest registerUserRequest) {
+        final UserDto userDtoRequest = new UserDto();
+        modelMapper.map(registerUserRequest, userDtoRequest);
+        final UserDto savedUser = userService.registerUser(userDtoRequest);
+        final RegisterUserResponse response = new RegisterUserResponse();
+        modelMapper.map(savedUser, response);
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping(path = "/addgroup")
