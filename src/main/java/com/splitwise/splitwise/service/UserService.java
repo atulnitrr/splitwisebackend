@@ -4,8 +4,8 @@ import java.util.List;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import com.splitwise.splitwise.dto.UserDto;
 import com.splitwise.splitwise.model.request.AddGroupRequest;
-import com.splitwise.splitwise.model.request.RegisterUserRequest;
 import com.splitwise.splitwise.model.request.UserGroupRequest;
+import com.splitwise.splitwise.model.response.UserResponse;
 
 
 public interface UserService extends UserDetailsService  {
@@ -15,5 +15,6 @@ public interface UserService extends UserDetailsService  {
     void addUserToGroup(final UserGroupRequest request);
     List<String> getAllGroups();
     List<String> getAllUsersOfGroup(final String groupName);
+    List<UserResponse> getUsers(final int page, final int size);
 
 }

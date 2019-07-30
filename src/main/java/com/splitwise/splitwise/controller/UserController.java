@@ -1,5 +1,6 @@
 package com.splitwise.splitwise.controller;
 
+import java.util.List;
 import javax.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -12,12 +13,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.splitwise.splitwise.dto.UserDto;
 import com.splitwise.splitwise.model.request.AddGroupRequest;
 import com.splitwise.splitwise.model.request.RegisterUserRequest;
 import com.splitwise.splitwise.model.request.UserGroupRequest;
 import com.splitwise.splitwise.model.response.RegisterUserResponse;
+import com.splitwise.splitwise.model.response.UserResponse;
 import com.splitwise.splitwise.service.UserService;
 
 
@@ -38,6 +41,12 @@ public class UserController {
     }
 
 
+    @GetMapping
+    public ResponseEntity<List<UserResponse>> getUsers(@RequestParam(name = "page", defaultValue = "1") final int page, @RequestParam(name = "size", defaultValue = "20") final int size) {
+        return ResponseEntity.ok().body(userService.getUsers(page, size));
+    }
+
+
     @PostMapping
     public ResponseEntity<?> registerUser(@Valid  @RequestBody final RegisterUserRequest registerUserRequest) {
         LOGGER.info("Received register user request name : {}, email: {}, pass : {}", registerUserRequest.getName(),
@@ -54,7 +63,7 @@ public class UserController {
     @PostMapping(path = "/addgroup")
     public ResponseEntity<?> addGroup (@RequestBody final AddGroupRequest addGroup) {
         userService.addGroup(addGroup);
-        return ResponseEntity.ok().body("added user succesfully");
+        return ResponseEntity.ok().body("added user successfully");
     }
 
     @PostMapping(path = "/addusertogroup")

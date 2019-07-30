@@ -69,4 +69,9 @@ public class UserLoginRegisterTest {
                 .response();
         System.out.println(response.asString());
     }
+
+    @Test
+    public void test_getusers() {
+
+    }
 }

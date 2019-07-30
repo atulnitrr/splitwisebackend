@@ -3,13 +3,13 @@ package com.splitwise.splitwise.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -20,8 +20,8 @@ import com.splitwise.splitwise.exception.SplitwiseAppException;
 import com.splitwise.splitwise.model.entity.GroupEntity;
 import com.splitwise.splitwise.model.entity.UserEntity;
 import com.splitwise.splitwise.model.request.AddGroupRequest;
-import com.splitwise.splitwise.model.request.RegisterUserRequest;
 import com.splitwise.splitwise.model.request.UserGroupRequest;
+import com.splitwise.splitwise.model.response.UserResponse;
 import com.splitwise.splitwise.repo.GroupRepo;
 import com.splitwise.splitwise.repo.UserRepo;
 import com.splitwise.splitwise.service.UserService;
@@ -54,6 +54,21 @@ public class UserServiceImpl implements UserService {
             throw new UsernameNotFoundException(email + " ==> Not found ");
         }
         return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), Collections.emptyList());
+    }
+
+    @Override
+    public List<UserResponse> getUsers(final int page, final int size) {
+        final int pageNumber = page >= 1 ? page - 1 : 1;
+        final int pageSize = size > 0 ? size : 20;
+        final PageRequest pageRequest = PageRequest.of(pageNumber, pageSize);
+        List<UserResponse> userResponses = new ArrayList<>();
+        userRepo.findAll(pageRequest).forEach(userEntity -> {
+            final UserResponse userResponse = new UserResponse();
+            modelMapper.map(userEntity, userResponse);
+            userResponses.add(userResponse);
+        });
+
+        return userResponses;
     }
 
     @Override
