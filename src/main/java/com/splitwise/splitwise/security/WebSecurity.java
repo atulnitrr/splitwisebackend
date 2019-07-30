@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.splitwise.splitwise.model.request.LoginRequest;
 import com.splitwise.splitwise.service.UserService;
 
 
@@ -42,6 +43,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .anyRequest()
                 .authenticated()
                 .and()
+                .addFilter(authenticationFilter())
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -52,5 +54,11 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userService).passwordEncoder(bCryptPasswordEncoder);
+    }
+
+    private AuthenticationFilter authenticationFilter() throws Exception {
+        final AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager());
+        authenticationFilter.setFilterProcessesUrl("/users/login");
+        return authenticationFilter;
     }
 }
