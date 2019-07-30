@@ -14,7 +14,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.splitwise.splitwise.AppConsts;
-import com.splitwise.splitwise.model.request.LoginRequest;
 import com.splitwise.splitwise.service.UserService;
 
 
@@ -50,6 +49,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .addFilter(authenticationFilter())
+                .addFilter(new AuthorizeFilter(authenticationManager()))
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 

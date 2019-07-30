@@ -40,6 +40,8 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> registerUser(@Valid  @RequestBody final RegisterUserRequest registerUserRequest) {
+        LOGGER.info("Received register user request name : {}, email: {}, pass : {}", registerUserRequest.getName(),
+                registerUserRequest.getEmail(), registerUserRequest.getPassword());
         final UserDto userDtoRequest = new UserDto();
         modelMapper.map(registerUserRequest, userDtoRequest);
         final UserDto savedUser = userService.registerUser(userDtoRequest);
