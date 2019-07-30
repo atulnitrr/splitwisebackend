@@ -1,6 +1,9 @@
 package com.splitwise.splitwise.controller;
 
+import javax.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -23,6 +26,8 @@ import com.splitwise.splitwise.service.UserService;
 @CrossOrigin
 public class UserController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
+
     private UserService userService;
     private ModelMapper modelMapper;
 
@@ -34,12 +39,13 @@ public class UserController {
 
 
     @PostMapping
-    public ResponseEntity<?> registerUser(@RequestBody final RegisterUserRequest registerUserRequest) {
+    public ResponseEntity<?> registerUser(@Valid  @RequestBody final RegisterUserRequest registerUserRequest) {
         final UserDto userDtoRequest = new UserDto();
         modelMapper.map(registerUserRequest, userDtoRequest);
         final UserDto savedUser = userService.registerUser(userDtoRequest);
         final RegisterUserResponse response = new RegisterUserResponse();
         modelMapper.map(savedUser, response);
+        LOGGER.info("Successfully added user -> {}", savedUser.getName() );
         return ResponseEntity.ok().body(response);
     }
 
