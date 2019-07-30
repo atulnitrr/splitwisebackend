@@ -25,11 +25,6 @@ public class UserControllerTest {
     @Autowired
     private UserController userController;
 
-    @Autowired
-    private BCryptPasswordEncoder bCryptPasswordEncoder;
-
-    @Autowired
-    private ModelMapper modelMapper;
 
     @Before
     public void setUp() throws Exception {
@@ -37,27 +32,6 @@ public class UserControllerTest {
         RestAssured.port = 8890;
     }
 
-    @Test
-    public void test_AddUsers() {
-
-        final RegisterUserRequest registerUserRequest = new RegisterUserRequest();
-        registerUserRequest.setName("Atul");
-        registerUserRequest.setEmail("ak@gmail.com");
-        registerUserRequest.setPassword("123");
-
-        final Response response = given()
-                .contentType("application/json")
-                .accept("application/json")
-                .body(registerUserRequest)
-                .when()
-                .post("/users")
-                .then()
-                .statusCode(200)
-                .extract()
-                .response();
-
-        System.out.println(response.asString());
-    }
 
     /**
      * Warrior, Rekha, Roger

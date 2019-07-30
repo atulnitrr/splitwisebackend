@@ -1,6 +1,7 @@
 package com.splitwise.splitwise.service.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -9,6 +10,7 @@ import java.util.Set;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -45,8 +47,13 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserDetails loadUserByUsername(final String s) throws UsernameNotFoundException {
-        return null;
+    public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
+        final UserEntity  userEntity = userRepo.findByEmail(email);
+
+        if (userEntity == null) {
+            throw new UsernameNotFoundException(email + " ==> Not found ");
+        }
+        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), Collections.emptyList());
     }
 
     @Override

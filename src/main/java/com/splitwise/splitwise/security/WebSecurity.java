@@ -1,6 +1,8 @@
 package com.splitwise.splitwise.security;
 
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,6 +10,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import com.splitwise.splitwise.AppConsts;
 import com.splitwise.splitwise.model.request.LoginRequest;
 import com.splitwise.splitwise.service.UserService;
 
@@ -60,5 +66,16 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
         final AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager());
         authenticationFilter.setFilterProcessesUrl("/users/login");
         return authenticationFilter;
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        final UrlBasedCorsConfigurationSource configurationSource = new UrlBasedCorsConfigurationSource();
+
+        final CorsConfiguration configuration = new CorsConfiguration();
+        configuration.applyPermitDefaultValues();
+        configuration.setExposedHeaders(Arrays.asList(AppConsts.HEADER_PREFIX));
+        configurationSource.registerCorsConfiguration("/**", configuration);
+        return configurationSource;
     }
 }
