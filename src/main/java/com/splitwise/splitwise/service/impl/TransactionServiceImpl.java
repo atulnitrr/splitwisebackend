@@ -44,8 +44,8 @@ public class TransactionServiceImpl implements TransactionService  {
     }
 
     @Override
-    public double getUserBalanceInALlGroup(final String userName) {
-        UserEntity userEntity = userRepo.findByName(userName);
+    public double getUserBalanceInALlGroup(final String email) {
+        UserEntity userEntity = userRepo.findByEmail(email);
         List<SettleTransEntity> settleTransEntities = settleTransRepo.findUserExpenses(userEntity);
         double totalPaid =
                 settleTransEntities.stream().filter(t -> t.getUserA().equals(userEntity)).mapToDouble(t-> t.getAmount()).sum();
@@ -100,11 +100,11 @@ public class TransactionServiceImpl implements TransactionService  {
 
 
     @Override
-    public double userBalanceInGroup(final String groupName, final String userName) {
-        final UserEntity userEntity = userRepo.findByName(userName);
+    public double userBalanceInGroup(final String groupName, final String email) {
+        final UserEntity userEntity = userRepo.findByEmail(email);
 
         if (userEntity == null) {
-            throw new SplitwiseAppException("User not found " + userName);
+            throw new SplitwiseAppException("User not found " + email);
         }
 
         final GroupEntity groupEntity = groupRepo.findByName(groupName);
@@ -113,7 +113,7 @@ public class TransactionServiceImpl implements TransactionService  {
             throw new SplitwiseAppException("Group not found " + groupName);
         }
 
-       return groupBalanceByUser(groupName).stream().filter(userBalanceResponse -> userBalanceResponse.getName().equals(userName)).mapToDouble(user -> user.getAmout()).sum();
+       return groupBalanceByUser(groupName).stream().filter(userBalanceResponse -> userBalanceResponse.getName().equals(email)).mapToDouble(user -> user.getAmout()).sum();
     }
 
     @Override
@@ -129,10 +129,10 @@ public class TransactionServiceImpl implements TransactionService  {
 
         for (int i = 0; i < transDetailList.size(); i++) {
             final TransDetail transDetail = transDetailList.get(i);
-            final String userName = transDetail.getPaidBy();
-            final UserEntity userEntity = userRepo.findByName(userName);
+            final String email = transDetail.getPaidBy();
+            final UserEntity userEntity = userRepo.findByEmail(email);
             if (userEntity == null) {
-                throw new SplitwiseAppException("User not found " + userName);
+                throw new SplitwiseAppException("User not found " + email);
             }
 //             add amount to transaction table
             addAmount(transDetail.getAmount(), userEntity, groupEntity);
@@ -142,7 +142,6 @@ public class TransactionServiceImpl implements TransactionService  {
 
     }
 
-
     private void addAmount(final double amount, final UserEntity userEntity, final GroupEntity groupEntity) {
         final TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setAmount(amount);
@@ -151,6 +150,7 @@ public class TransactionServiceImpl implements TransactionService  {
         transactionRepo.save(transactionEntity);
     }
 
+    @Transactional
     private void settle(final double amount, final UserEntity userEntity, final GroupEntity groupEntity) {
         final Set<UserEntity> allUsers =  groupEntity.getUsers();
         final Iterator<UserEntity> iterator = allUsers.iterator();
@@ -166,6 +166,7 @@ public class TransactionServiceImpl implements TransactionService  {
         }
     }
 
+    @Transactional
     private void updateTrans(final UserEntity paidBy, final UserEntity paidTo,
             final GroupEntity groupEntity, double amountToSettle) {
 

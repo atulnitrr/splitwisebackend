@@ -44,11 +44,10 @@ public class UserEntity {
     private Set<GroupEntity> groups;
 
     public void addUserToGroup(final GroupEntity groupEntity) {
-        if (groups == null) {
-            groups = new HashSet<>();
+        if (this.groups == null) {
+            this.groups = new HashSet<>();
         }
-        groups.add(groupEntity);
-        groupEntity.getUsers().add(this);
+        this.groups.add(groupEntity);
     }
 
     public String getEmail() {

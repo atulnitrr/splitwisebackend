@@ -5,8 +5,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +30,8 @@ import com.splitwise.splitwise.service.UserService;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserServiceImpl.class);
 
     private UserRepo userRepo;
     private GroupRepo groupRepo;
@@ -84,19 +87,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<String> getAllUsersOfGroup(final String groupName) {
+    public List<UserResponse> getAllUsersOfGroup(final String groupName) {
         final GroupEntity groupEntity = groupRepo.findByName(groupName);
         if (groupEntity == null) {
             throw new SplitwiseAppException(groupName + " --> Not found");
         }
 
-        final Set<UserEntity> userEntities = groupEntity.getUsers();
+        final List<UserResponse> users = new ArrayList<>();
 
-        final List<String> users = new ArrayList<>();
+        groupEntity.getUsers().forEach(userEntity -> {
+            final UserResponse userResponse = new UserResponse();
+            modelMapper.map(userEntity, userResponse);
+            users.add(userResponse);
+        });
 
-        for (UserEntity userEntity : userEntities) {
-            users.add(userEntity.getName());
-        }
 
         return users;
     }
@@ -127,27 +131,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void addUserToGroup(final UserGroupRequest request) {
+        // UserGroupRequest is having email id
         GroupEntity currentGroup = groupRepo.findByName(request.getGroupName());
         if (currentGroup == null) {
             currentGroup = new GroupEntity();
             currentGroup.setName(request.getGroupName());
         }
-
         List<String> allUsers = request.getUserNames();
-
         for (int i = 0; i < allUsers.size(); i++) {
-            final String userName = allUsers.get(i);
-            UserEntity userEntity = userRepo.findByName(userName);
-
-            if (userEntity == null) {
-                userEntity = new UserEntity();
-                userEntity.setName(userName);
-            }
+            final String email = allUsers.get(i);
+            UserEntity userEntity = userRepo.findByEmail(email);
 
             userEntity.addUserToGroup(currentGroup);
             userRepo.save(userEntity);
+            // all user are registered
+            currentGroup.addUserToGroup(userEntity);
         }
-
+        groupRepo.save(currentGroup);
 
     }
 }

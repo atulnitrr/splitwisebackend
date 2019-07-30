@@ -14,7 +14,7 @@ public interface UserService extends UserDetailsService  {
     void addGroup(final AddGroupRequest groupName);
     void addUserToGroup(final UserGroupRequest request);
     List<String> getAllGroups();
-    List<String> getAllUsersOfGroup(final String groupName);
+    List<UserResponse> getAllUsersOfGroup(final String groupName);
     List<UserResponse> getUsers(final int page, final int size);
 
 }

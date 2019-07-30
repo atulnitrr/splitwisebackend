@@ -1,5 +1,6 @@
 package com.splitwise.splitwise.model.entity;
 
+import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -8,7 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 
@@ -49,6 +49,14 @@ public class GroupEntity {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public void addUserToGroup(final UserEntity userEntity) {
+        if (users == null) {
+            users = new HashSet<>();
+        }
+
+        users.add(userEntity);
     }
 
     @Override public String toString() {
